@@ -1,4 +1,7 @@
 from dotenv import load_dotenv
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 
 load_dotenv()
 
@@ -6,6 +9,37 @@ load_dotenv()
 def main():
     print("Hello from langchain-course!")
 
+
+information = """
+Dame Jacinda Kate Laurell Ardern GNZM (/ɑːrˈdɜːrn/ ar-DURN;[1] born 26 July 1980) is a New Zealand politician and activist who was the 40th prime minister of New Zealand and leader of the Labour Party from 2017 to 2023. She was a member of Parliament (MP) as a list MP from 2008 to 2017 and for Mount Albert from 2017 to 2023.[2][3]
+
+Born and raised in Hamilton, Ardern grew up in Morrinsville and Murupara. She joined the New Zealand Labour Party at the age of 17. After graduating from the University of Waikato in 2001, Ardern worked as a researcher in the office of then-New Zealand Prime Minister Helen Clark. She later worked in London as an adviser in the Cabinet Office during Tony Blair's premiership. In 2008, Ardern was elected president of the International Union of Socialist Youth. Ardern was first elected as an MP in the 2008 general election, when Labour lost power after nine years. She was later elected to represent the Mount Albert electorate in a by-election on 25 February 2017.
+
+Ardern was unanimously elected as deputy leader of the Labour Party on 1 March 2017, after the resignation of Annette King. Exactly five months later, with an election due, Labour's leader Andrew Little resigned after a historically low opinion polling result for the party, with Ardern elected unopposed as leader in his place.[4] Labour's support increased rapidly after Ardern became leader, and she led her party to gain 14 seats at the 2017 general election on 23 September, winning 46 seats to the National Party's 56.[5] After negotiations, New Zealand First chose to enter a minority coalition government with Labour, supported by the Green Party, with Ardern as prime minister. She was sworn in by the governor-general on 26 October 2017.[6] She became the world's youngest female head of government at age 37.[7] Ardern gave birth to her daughter on 21 June 2018, making her the world's second elected head of government to give birth while in office (after Benazir Bhutto).[8]
+
+Ardern describes herself as a social democrat and a progressive.[9][10] The Sixth Labour Government faced challenges from the New Zealand housing crisis, child poverty, and social inequality. In March 2019, in the aftermath of the Christchurch mosque shootings, Ardern reacted by rapidly introducing strict gun laws. Throughout 2020 she led New Zealand's response to the COVID-19 pandemic, for which she won praise for New Zealand being one of few Western nations to successfully contain the virus. Ardern moved the Labour Party further to the centre towards the October 2020 general election, promising to cut spending during the remainder of the COVID-19 recession.[11] She led the Labour Party to a landslide victory, gaining an overall majority of 65 seats in Parliament, the first time a majority government had been formed since 1996.[12][13][14]
+
+Facing declining popularity and increasing criticism over the government's handling of key issues such as the economy, housing, child poverty and the pandemic, Ardern announced on 19 January 2023, that she would resign as Labour leader, stating that she "didn't have enough in the tank."[15][16][17] Ardern resigned as leader of the Labour Party on 22 January and submitted her resignation as prime minister three days later. Rising costs of living and concerns that the government's focus on health measures overshadowed effective economic recovery fuelled public backlash against the Labour Party in the 2023 general election.
+
+Since late 2025, Ardern has resided in the United Kingdom, after having lived in the United States for two years.
+"""
+
+summary_template = """
+given the information {information} about a person I want you to create:
+1. A short summary
+2. two interesting facts about them
+"""
+
+summary_prompt_template = PromptTemplate(
+    template=summary_template, input_variables=["information"]
+)
+
+#llm = ChatOllama(temperature=0, model="gpt-oss:20b")
+llm = ChatOpenAI(temperature=0, model="gpt-5")
+chain = summary_prompt_template | llm
+
+response = chain.invoke(input={"information": information})
+print(response.content)
 
 if __name__ == "__main__":
     main()
